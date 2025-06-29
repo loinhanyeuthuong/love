@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title>Bạn có 1 lời nhắn</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/webp" href="https://raw.githubusercontent.com/guiyeuthuong/love/main/uploads/1749688410048_favicon.webp">
+  <meta property="og:image" content="https://raw.githubusercontent.com/guiyeuthuong/love/main/img/thongdiepyeuthuong.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; }
+    canvas { display: block; }
+    #loadingText {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+    }
+	    .resimg {
+      max-width: 90vw; 
+      max-height: 90vh;
+      width: auto;
+      height: auto;
+    }
+    .nut-nhac {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 25px;
+      height: 25px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      backdrop-filter: blur(5px);
+      z-index: 9999;
+      transition: background 0.3s ease;
+    }
+    .nut-nhac i {
+      font-size: 10px;
+    }
+    .nut-nhac:hover {
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .xoayyy {
+      animation: quay 2s linear infinite;
+    }
+    @keyframes quay {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<textarea id="noidung" style="display: none;">
+</textarea>
+<input type="hidden" id="linkanh" value="https://dulieublog2.github.io/img/blank.png">
+<input type="hidden" id="linknhac">
+
+<div id="loadingText"><img class="resimg" src="https://raw.githubusercontent.com/guiyeuthuong/love/main/img/1751160206131_dangtaiyeuthuong.gif"/></div>
+
+
+<!--
+Những nội dung sau đây sẽ bị xóa khi kiểm duyệt
++ Có ngôn từ thù địch, chống phá nhà nước...
++ Nội dung tục tĩu, trái với thuần phong mỹ tục..
+
+- Page không chịu trách nhiệm với nội dung mà người dùng tạo ra trái với mục đích ban đầu của page
+
+-->
+<script src="https://cdn.jsdelivr.net/gh/dulieublog2/js@main/chukhonggian.js"></script>
+<script>
+
+</script>
+<audio id="phatnhac" autoplay muted loop>
+  <source id="nguonNhac" src="" type="audio/mpeg">
+</audio>
+
+<div id="nutNhac" class="nut-nhac" title="Bật/Tắt nhạc">
+  <i class="fas fa-volume-xmark"></i>
+</div>
+
+<script>
+  const phatnhac = document.getElementById('phatnhac');
+  const nutNhac = document.getElementById('nutNhac');
+  const icon = nutNhac.querySelector('i');
+
+  document.addEventListener('click', function () {
+    if (phatnhac.muted) {
+      phatnhac.muted = false;
+      phatnhac.play().then(() => {
+        nutNhac.classList.add('xoayyy');
+        icon.className = 'fas fa-music';
+      }).catch(err => console.error('Lỗi phát nhạc:', err));
+    }
+  }, { once: true });
+
+  nutNhac.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (phatnhac.paused) {
+      phatnhac.play();
+      nutNhac.classList.add('xoayyy');
+      icon.className = 'fas fa-music';
+    } else {
+      phatnhac.pause();
+      nutNhac.classList.remove('xoayyy');
+      icon.className = 'fas fa-volume-xmark';
+    }
+  });
+</script>
+<script>
+  function decodeDataFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+if (!id) {
+  document.getElementById("loadingText").innerHTML = "<p style='color:white; font-size:20px; text-align:center;'> Thiếu ID. Dùng URL có dạng ?id=abc123.</p>";
+  return;
+}
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxM_fRnzVX4dBhyg1qq5aA3Zq7cn2UZalbN--aMu89pPxLmfbaOIk2LNxys_EeY-Pik/exec"; 
+
+
+fetch(`${webAppUrl}?id=${id}`)
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) {
+      document.getElementById("loadingText").innerHTML = `
+        <div style="color: white; text-align: center; font-size: 20px;">
+          ❌ ${data.error}
+        </div>
+      `;
+      return;
+    }
+if (data.tieude) {
+  document.title = data.tieude;
+}
+
+
+
+    if (data.noidung) {
+      document.getElementById("noidung").value = data.noidung;
+    }
+    if (data.linkanh) {
+      document.getElementById("linkanh").value = data.linkanh;
+    }
+
+	
+if (data.linknhac) {
+  const baiNhac = data.linknhac;
+  document.getElementById("linknhac").value = baiNhac;
+} else {
+  document.getElementById("linknhac").value = "loveyou";
+}
+
+
+
+
+    doiTenBaiHat();
+    startRendering();
+  })
+  .catch(err => {
+    console.error("Lỗi tải dữ liệu", err);
+    document.getElementById("loadingText").innerHTML = `
+      <div style="color: white; text-align: center; font-size: 20px;">
+        ⚠️ Không thể kết nối đến máy chủ. Vui lòng thử lại sau.
+      </div>
+    `;
+  });
+
+  }
+
+  window.addEventListener("DOMContentLoaded", decodeDataFromQuery);
+</script>
+<script>
+  function doiTenBaiHat() {
+    const tenMoi = document.getElementById("linknhac").value.trim();
+    if (tenMoi !== "") {
+      const linkMoi = `https://huongai.github.io/nhac/${tenMoi}.mp3`;
+      const nguon = document.getElementById("nguonNhac");
+      const audio = document.getElementById("phatnhac");
+
+      nguon.src = linkMoi;
+      audio.load();
+      audio.play();
+    }
+  }
+</script>
+<script>
+function startRendering() {
+
+
+
+
+const noidung = document.getElementById("noidung").value;
+const jansharenoidung = noidung.split("\n").map(s => s.trim()).filter(s => s);
+const linkanh = document.getElementById("linkanh").value;
+const imageUrls = linkanh.split("\n").map(s => s.trim()).filter(s => s);
+//  const imageUrls = ['https://dulieublog2.github.io/img/blank.png'];
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 30;
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const loader = new THREE.FontLoader();
+  const textureLoader = new THREE.TextureLoader();
+  const particles = [];
+
+  loader.load('https://cdn.jsdelivr.net/gh/nguoiyeucuatoi/love/fonttextjanshare.json', font => {
+    document.getElementById("loadingText").style.display = "none";
+
+    for (let i = 0; i < 60; i++) {
+      const textGeo = new THREE.TextGeometry(jansharenoidung[Math.floor(Math.random() * jansharenoidung.length)], {
+        font: font,
+        size: 1,
+        height: 0.1,
+        curveSegments: 8,
+      });
+
+      const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true });
+      const mesh = new THREE.Mesh(textGeo, material);
+
+      mesh.position.set((Math.random() - 0.5) * 30, Math.random() * 50 + 30, (Math.random() - 0.5) * 30);
+      mesh.userData.velocity = new THREE.Vector3(0, -0.1 - Math.random() * 0.2, 0);
+
+      scene.add(mesh);
+      particles.push(mesh);
+    }
+
+    for (let i = 0; i < 100; i++) {
+      const shape = new THREE.Shape();
+      const x = 0, y = 0;
+      shape.moveTo(x, y);
+      shape.bezierCurveTo(x, y, x - 1.5, y - 1.5, x, y - 3);
+      shape.bezierCurveTo(x + 1.5, y - 1.5, x, y, x, y);
+
+      const geometry = new THREE.ShapeGeometry(shape);
+      const material = new THREE.MeshBasicMaterial({ color: 0xff69b4, side: THREE.DoubleSide, transparent: true });
+      const heart = new THREE.Mesh(geometry, material);
+      heart.scale.set(0.5, 0.5, 0.5);
+
+      heart.position.set((Math.random() - 0.5) * 50, Math.random() * 50 + 30, (Math.random() - 0.5) * 50);
+      heart.userData.velocity = new THREE.Vector3(0, -0.05 - Math.random() * 0.1, 0);
+
+      scene.add(heart);
+      particles.push(heart);
+    }
+
+    const imageTextures = [];
+    let currentTextureIndex = 0;
+
+    const loadImages = imageUrls.map(url =>
+      new Promise(resolve => {
+        textureLoader.load(url, texture => {
+          imageTextures.push(texture);
+          resolve();
+        });
+      })
+    );
+
+    Promise.all(loadImages).then(() => {
+      for (let i = 0; i < 8; i++) {
+        const texture = imageTextures[i % imageTextures.length];
+        const img = texture.image;
+
+        const imageWidth = img.width;
+        const imageHeight = img.height;
+        const aspectRatio = imageWidth / imageHeight;
+
+        const height = 10;
+        const width = height * aspectRatio;
+
+        const geometry = new THREE.PlaneGeometry(width, height);
+        const material = new THREE.MeshBasicMaterial({ 
+          map: texture, 
+          transparent: true,
+          side: THREE.DoubleSide
+        });
+
+        const imageMesh = new THREE.Mesh(geometry, material);
+        imageMesh.position.set((Math.random() - 0.5) * 50, Math.random() * 50 + 30, (Math.random() - 0.5) * 50);
+        imageMesh.userData.velocity = new THREE.Vector3(0, -0.04 - Math.random() * 0.03, 0);
+        imageMesh.userData.isImage = true;
+
+        scene.add(imageMesh);
+        particles.push(imageMesh);
+      }
+    });
+  });
+
+  function animate(time) {
+    requestAnimationFrame(animate);
+    controls.update();
+
+    const maxDist = 100;
+
+    particles.forEach(p => {
+      p.position.add(p.userData.velocity);
+
+      if (p.position.y < -30) {
+        p.position.y = Math.random() * 50 + 30;
+        p.position.x = (Math.random() - 0.5) * 50;
+        p.position.z = (Math.random() - 0.5) * 50;
+
+        if (p.userData.isImage) {
+          currentTextureIndex = (currentTextureIndex + 1) % imageTextures.length;
+          p.material.map = imageTextures[currentTextureIndex];
+          p.material.needsUpdate = true;
+
+          const img = imageTextures[currentTextureIndex].image;
+          const aspectRatio = img.width / img.height;
+          const height = 10;
+          const width = height * aspectRatio;
+
+          p.geometry.dispose();
+          p.geometry = new THREE.PlaneGeometry(width, height);
+        }
+      }
+
+      if (p.material && !(p.geometry instanceof THREE.PlaneGeometry)) {
+        if (p.material.color) {
+          const hue = (time * 0.0001 + p.id * 0.01) % 1;
+          p.material.color.setHSL(hue, 0.8, 0.6);
+        }
+        const opacity = 1 - (p.position.length() / maxDist);
+        p.material.opacity = THREE.MathUtils.clamp(opacity, 0, 1);
+      }
+    });
+
+    renderer.render(scene, camera);
+  }
+
+  animate();  }
+</script>
+
+</body>
+</html>
